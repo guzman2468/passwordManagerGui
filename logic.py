@@ -60,8 +60,6 @@ class Logic(QMainWindow, Ui_MainWindow):
         '''
         This function handles input validation on the first window by verifying all
         needed inputs are present and meet the minimum length requirements.
-        Input validation errors are handled at the caller level, whereas database
-        errors are handled at the API level. FULLY FUNCTIONAL AS OF 9/13/2025
         :return: None
         '''
         try:
@@ -105,10 +103,6 @@ class Logic(QMainWindow, Ui_MainWindow):
             if self.get_first_user_entry() == '' or self.get_first_password_entry() == '':
                 raise ValueError('All fields must be filled.')
 
-            #TODO: Figure out how to access first window values from the second window
-
-
-
             document = {
                 "username": self.get_first_user_entry(),
                 "password": self.get_first_password_entry(),
@@ -124,7 +118,6 @@ class Logic(QMainWindow, Ui_MainWindow):
                     self.__logged_in_username = self.get_first_user_entry()
                     self.__logged_in_password = self.get_first_password_entry()
                     self.open_second_window()
-                    #here
             except requests.exceptions.HTTPError:
                 if response is not None:
                     error_detail = response.json().get("detail")
@@ -136,7 +129,7 @@ class Logic(QMainWindow, Ui_MainWindow):
             self.status_label.setText(str(e))
 
     def open_second_window(self):
-        self.second_window = SecondWindow(self)  # Pass the main window to the second window
+        self.second_window = SecondWindow(self)
         pos = self.pos()
         size = self.size()
         self.second_window.setGeometry(pos.x(), pos.y(), size.width(), size.height())
@@ -144,6 +137,11 @@ class Logic(QMainWindow, Ui_MainWindow):
         self.close()
 
     def search_sites(self):
+        '''
+        This function handles input validation on searching sites but ensuring the search bar
+        is filled before password information to the API
+        :return:
+        '''
         try:
             website_to_find = self.second_window.website_entry.text().lower().strip()
             if website_to_find == '':
@@ -156,7 +154,6 @@ class Logic(QMainWindow, Ui_MainWindow):
                     {"site_name": website_to_find}
                 ]
             }
-            #TODO: figure out how to encrypt the initial password in calls 
 
             response = None
 
@@ -193,6 +190,11 @@ class Logic(QMainWindow, Ui_MainWindow):
         self.third_window.back_button.clicked.connect(lambda: self.back())
 
     def new_website_entry(self):
+        '''
+        This method takes in the text input from the GUI and validates input is present
+        before sending it in JSON format to the API
+        :return:
+        '''
         try:
             website_name = self.third_window.website_name_entry.text().lower().strip()
             username = self.third_window.second_username_entry.text()
