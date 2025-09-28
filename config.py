@@ -1,1 +1,1 @@
-api_url = "https://passwordmanagercomplete.onrender.com"
+api_url = "https://passwordmanagerapi-m3va.onrender.com"
